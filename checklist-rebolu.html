@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checklist Diario - Rebolu</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #fafafa;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      color: #c49b3f;
+    }
+    .task {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      padding: 1rem;
+      margin: 0.5rem 0;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    button {
+      background: #c49b3f;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .task.completed {
+      background: #e0ffe0;
+      text-decoration: line-through;
+    }
+  </style>
+</head>
+<body>
+  <h1>✅ Checklist Diario - Restaurante Rebolu</h1>
+
+  <label>Empleado: <input id="empleado" placeholder="Nombre" /></label>
+
+  <div id="checklist"></div>
+
+  <script>
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbxI_-VjeiEcFy2nGdqFg8c4OqC9LDzAZLdbYnR5Tr89CxxVEF9mJAAo5AyJfRGVR1iILA/exec"; // 👈 Reemplaza con tu URL
+
+    const tareas = [
+      "Encender equipos de PRIMER PISO",
+      "Llenar agua de cafetera PRIMER PISO",
+      "Encender equipos de COCINA",
+      "Limpieza de PRIMER PISO y MESAS",
+      "Revisión de baños y limpieza general PRIMER PISO",
+      "Limpieza de COCINA",
+      "Revisión de baños y limpieza general de neveras, bodega de COCINA ",
+      "Preparar mise en place PRIMER PISO",
+      "Preparar mise en place COCINA",
+      "Realizar produccion COCINA",
+      "Realizar produccion PRIMER PISO",
+      "Recibir pedidos, Organizar y almacenar COCINA",
+      "Recibir pedidos, Organizar y almacenar PRIMER PISO",
+      "Brillar cubiertos y cristaleria PRIMER PISO",
+      "Verificar surtido de neveras PRIMER PISO",
+      "Colocar banderas PRIMER PISO",
+      "Quitar protectores TV PRIMER PISO",
+      "Verificar reservas del día",
+      "Realizar apertura de caja",
+      "Realizar cierre de caja",
+      "Poner protectores TV PRIMER PISO",
+      "Revisión de inventario PRIMER PISO",
+      "Revisión de inventario COCINA",
+      "Apagar equipos COCINA",
+      "Apagar equipos PRIMER PISO",
+      "Sacar basura COCINA",
+      "Sacar basura PRIMER PISO",
+      "Revisar limpieza de platos y cristaleria PRIMER PISO",
+      "Revisar limpieza de ollas, platos,cubiertos,lava platos COCINA",
+      "Filtrar aceite de COCINA"
+    ];
+
+    const checklist = document.getElementById('checklist');
+
+    tareas.forEach((tarea, index) => {
+      const div = document.createElement('div');
+      div.classList.add('task');
+      div.innerHTML = `
+        <span>${tarea}</span>
+        <button id="btn-${index}">Marcar</button>
+      `;
+      checklist.appendChild(div);
+
+      const btn = document.getElementById(`btn-${index}`);
+      btn.addEventListener('click', async () => {
+        const empleado = document.getElementById('empleado').value.trim();
+        if (!empleado) {
+          alert("Por favor escribe tu nombre antes de marcar.");
+          return;
+        }
+
+        const fecha = new Date();
+        const data = {
+          tarea,
+          empleado,
+          fecha: fecha.toLocaleDateString('es-CO'),
+          hora: fecha.toLocaleTimeString('es-CO')
+        };
+
+        div.classList.add('completed');
+        btn.textContent = "✔ Completada";
+        btn.disabled = true;
+
+        await fetch(webAppUrl, {
+          method: "POST",
+          body: JSON.stringify(data)
+        });
+
+        console.log(`Guardado en Sheets: ${tarea}`);
+      });
+    });
+  </script>
+</body>
+</html>
